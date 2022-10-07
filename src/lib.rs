@@ -1,6 +1,6 @@
 #[allow(dead_code)]
 mod booklib {
-    use std::collections::HashMap;
+    use std::{collections::HashMap, ops::Deref};
 
     #[derive(Debug, PartialEq)]
     pub struct Book<'a> {
@@ -26,6 +26,13 @@ mod booklib {
     #[derive(Debug, PartialEq)]
     pub struct BookCart<'a> {
         pub bookset: Vec<BookSet<'a>>,
+    }
+
+    impl<'a> Deref for BookCart<'a> {
+        type Target = Vec<BookSet<'a>>;
+        fn deref(&self) -> &Self::Target {
+            &self.bookset
+        }
     }
 
     impl<'a> BookCart<'a> {
@@ -55,7 +62,7 @@ mod booklib {
     }
 
     pub fn calculate_price<'a>(bookcart: &BookCart<'a>) -> f32 {
-        let bookset = &bookcart.bookset;
+        let bookset = &*bookcart;
         //get number of book'type in cart
         let count_book_type = bookset.len();
         //hold count of book peer type
